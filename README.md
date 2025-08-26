@@ -1,36 +1,53 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI Image Analyzer
 
-## Getting Started
+AI Image Analyzer는 Next.js 기반의 이미지 분석 웹앱입니다. 이미지를 업로드하고, 질문을 입력하면 AI가 이미지를 분석하여 마크다운 스타일로 결과를 제공합니다. 모바일 퍼스트, Vercel 스타일의 다크 UI를 적용하였으며, x-api-key를 통한 안전한 API 호출을 지원합니다.
 
-First, run the development server:
+## 주요 기능
+- **이미지 업로드** 및 미리보기
+- **질문 입력** (텍스트)
+- **x-api-key** 입력 및 헤더 전달
+- **AI 분석 결과** 마크다운(볼드/이탤릭) 스타일로 표시
+- **Analyze 버튼** 내 스피너 및 로딩 UX
+- **에러 발생 시 모달 팝업**
+- **모바일 퍼스트 & 다크 UI** (Vercel 스타일)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 사용 방법
+1. 저장소 클론 및 의존성 설치
+   ```bash
+   git clone <repo-url>
+   cd ai-image-analyzer
+   npm install
+   ```
+2. `.env.local` 파일에 환경변수(x-api-key 등) 설정
+3. 개발 서버 실행
+   ```bash
+   npm run dev
+   ```
+4. 브라우저에서 [http://localhost:3000](http://localhost:3000) 접속
+
+## 폴더 구조
+```
+├── src/
+│   └── app/
+│       ├── api/
+│       │   └── analyze/route.ts   # API 라우트 (x-api-key 프록시)
+│       ├── page.tsx               # 메인 페이지 (UI/UX)
+│       └── globals.css            # 글로벌 스타일
+├── public/                        # 정적 파일
+├── .env.local                     # 환경 변수
+├── package.json
+└── README.md
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## API 연동 방식
+- 클라이언트에서 입력받은 x-api-key를 서버 API 라우트로 전달
+- 서버에서 외부 AI 이미지 분석 API로 x-api-key 헤더 포함 POST 요청
+- 응답 결과를 마크다운 스타일로 가공해 클라이언트에 반환
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 기술 스택
+- Next.js 15, React 19
+- TypeScript
+- Tailwind CSS (Vercel 스타일 다크 테마)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 라이선스
+MIT License
