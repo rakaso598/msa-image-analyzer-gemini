@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
 
     // 요청 본문 파싱
     const { image, query } = await request.json();
-    
+
     if (!image || !query) {
       return NextResponse.json(
         { error: 'Image and query are required' },
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     // Base64 이미지를 Blob으로 변환
     const base64Data = image.replace(/^data:image\/[a-z]+;base64,/, '');
     const imageBuffer = Buffer.from(base64Data, 'base64');
-    
+
     // FormData 생성
     const formData = new FormData();
     const blob = new Blob([imageBuffer], { type: 'image/jpeg' });
@@ -48,9 +48,9 @@ export async function POST(request: NextRequest) {
     }
 
     const result = await response.json();
-    
+
     return NextResponse.json(result);
-    
+
   } catch (error) {
     console.error('API Error:', error);
     return NextResponse.json(

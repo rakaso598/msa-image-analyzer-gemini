@@ -33,7 +33,7 @@ export default function Home() {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    
+
     if (!selectedFile || !query) {
       setError('Please select an image and enter a question.');
       return;
@@ -48,7 +48,7 @@ export default function Home() {
       const reader = new FileReader();
       reader.onload = async () => {
         const base64String = reader.result as string;
-        
+
         // API 호출
         const response = await fetch('/api/analyze', {
           method: 'POST',
@@ -69,7 +69,7 @@ export default function Home() {
 
         setResult(data);
       };
-      
+
       reader.readAsDataURL(selectedFile);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
@@ -105,7 +105,7 @@ export default function Home() {
               >
                 {selectedFile ? 'Change Image' : 'Choose an Image'}
               </label>
-              
+
               {/* Image Preview */}
               {previewUrl && (
                 <div className="mt-4">
