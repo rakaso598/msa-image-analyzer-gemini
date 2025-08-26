@@ -1,103 +1,169 @@
-import Image from "next/image";
+'use client';
+
+import { useState } from 'react';
+import Image from 'next/image';
+
+interface AnalysisResult {
+  analysis?: string;
+  response?: string;
+  error?: string;
+}
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [query, setQuery] = useState('');
+  const [result, setResult] = useState<AnalysisResult | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [previewUrl, setPreviewUrl] = useState<string>('');
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      setPreviewUrl(URL.createObjectURL(file));
+      setError('');
+      setResult(null);
+    }
+  };
+
+  const handleQueryChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setQuery(event.target.value);
+  };
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    
+    if (!selectedFile || !query) {
+      setError('Please select an image and enter a question.');
+      return;
+    }
+
+    setIsLoading(true);
+    setError('');
+    setResult(null);
+
+    try {
+      // 파일을 Base64로 변환
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const base64String = reader.result as string;
+        
+        // API 호출
+        const response = await fetch('/api/analyze', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            image: base64String,
+            query: query,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to analyze image');
+        }
+
+        setResult(data);
+      };
+      
+      reader.readAsDataURL(selectedFile);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 px-4 py-6">
+      <div className="max-w-md mx-auto">
+        {/* Header */}
+        <header className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">📸 Image Analyzer</h1>
+          <p className="text-gray-600">Upload an image and ask a question.</p>
+        </header>
+
+        {/* Main Form */}
+        <main>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* File Input */}
+            <div className="bg-white rounded-xl p-6 shadow-lg">
+              <input
+                type="file"
+                id="image-upload"
+                className="hidden"
+                onChange={handleFileChange}
+                accept="image/*"
+              />
+              <label
+                htmlFor="image-upload"
+                className="block w-full p-4 border-2 border-dashed border-gray-300 rounded-lg text-center cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-colors"
+              >
+                {selectedFile ? 'Change Image' : 'Choose an Image'}
+              </label>
+              
+              {/* Image Preview */}
+              {previewUrl && (
+                <div className="mt-4">
+                  <Image
+                    src={previewUrl}
+                    alt="Preview"
+                    width={300}
+                    height={200}
+                    className="w-full h-48 object-cover rounded-lg shadow-md"
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Query Input */}
+            <div className="bg-white rounded-xl p-6 shadow-lg">
+              <textarea
+                className="w-full p-4 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-400 focus:border-transparent outline-none"
+                placeholder="What can you see in this image?"
+                value={query}
+                onChange={handleQueryChange}
+                rows={3}
+              />
+            </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              className="w-full bg-blue-600 text-white py-4 px-6 rounded-xl font-semibold text-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors shadow-lg"
+              disabled={!selectedFile || !query || isLoading}
+            >
+              {isLoading ? (
+                <div className="flex items-center justify-center">
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                  Analyzing...
+                </div>
+              ) : (
+                'Analyze Image'
+              )}
+            </button>
+          </form>
+
+          {/* Error Display */}
+          {error && (
+            <div className="mt-6 bg-red-50 border border-red-200 rounded-xl p-4">
+              <p className="text-red-600 text-center">{error}</p>
+            </div>
+          )}
+
+          {/* Result Display */}
+          {result && (
+            <div className="mt-6 bg-white rounded-xl p-6 shadow-lg">
+              <h2 className="text-xl font-semibold text-gray-800 mb-3">Analysis Result</h2>
+              <p className="text-gray-700 leading-relaxed">{result.analysis || result.response || JSON.stringify(result)}</p>
+            </div>
+          )}
+        </main>
+      </div>
     </div>
   );
 }
