@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
 
     if (!apiKey) {
       return NextResponse.json(
-        { error: 'API key is required' },
+        { error: 'x-api-key is required' },
         { status: 400 }
       );
     }

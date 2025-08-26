@@ -40,7 +40,7 @@ function HomePage() {
     event.preventDefault();
 
     if (!selectedFile || !query || !apiKey) {
-      setError('Please select an image, enter a question, and provide your API key.');
+      setError('Please select an image, enter a question, and provide your x-api-key.');
       return;
     }
 
@@ -99,13 +99,13 @@ function HomePage() {
             {/* API Key Input */}
             <div className="bg-gray-800 rounded-xl p-6 shadow-xl border border-gray-700">
               <label htmlFor="api-key" className="block text-sm font-medium text-gray-200 mb-2">
-                API Key
+                x-api-key
               </label>
               <input
                 type="password"
                 id="api-key"
                 className="w-full p-4 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                placeholder="Enter your Gemini API key"
+                placeholder="Enter your x-api-key value"
                 value={apiKey}
                 onChange={handleApiKeyChange}
               />
