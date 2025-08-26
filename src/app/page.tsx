@@ -57,47 +57,60 @@ function HomePage() {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
+    console.log('Form submitted, checking validation...');
+    console.log('selectedFile:', !!selectedFile, 'query:', !!query, 'apiKey:', !!apiKey);
+
     if (!selectedFile || !query || !apiKey) {
+      console.log('Validation failed, showing error modal');
       setError('Please select an image, enter a question, and provide your x-api-key.');
       setShowErrorModal(true);
       return;
     }
 
+    console.log('Validation passed, starting analysis...');
     setIsLoading(true);
     setError('');
     setResult(null);
 
     try {
-      // 파일을 Base64로 변환
-      const reader = new FileReader();
-      reader.onload = async () => {
-        const base64String = reader.result as string;
+      // 파일을 Base64로 변환 (Promise로 래핑)
+      console.log('Converting file to base64...');
+      const base64String = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = () => reject(new Error('Failed to read file'));
+        reader.readAsDataURL(selectedFile);
+      });
 
-        // API 호출
-        const response = await fetch('/api/analyze', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            image: base64String,
-            query: query,
-            apiKey: apiKey,
-          }),
-        });
+      console.log('File converted, making API call...');
+      // API 호출
+      const response = await fetch('/api/analyze', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          image: base64String,
+          query: query,
+          apiKey: apiKey,
+        }),
+      });
 
-        const data = await response.json(); if (!response.ok) {
-          throw new Error(data.error || 'Failed to analyze image');
-        }
+      const data = await response.json();
+      console.log('API response:', response.status, data);
 
-        setResult(data);
-      };
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to analyze image');
+      }
 
-      reader.readAsDataURL(selectedFile);
+      console.log('Analysis successful');
+      setResult(data);
     } catch (err) {
+      console.error('Error occurred:', err);
       setError(err instanceof Error ? err.message : 'An error occurred');
       setShowErrorModal(true);
     } finally {
+      console.log('Setting loading to false');
       setIsLoading(false);
     }
   };
@@ -202,39 +215,33 @@ function HomePage() {
             {/* Submit Button */}
             <button
               type="submit"
-              className={`w-full py-4 px-6 rounded-lg font-semibold text-lg transition-all transform ${isLoading
-                  ? 'bg-gray-700 text-gray-100 cursor-wait'
+              className={`w-full py-4 px-6 rounded-lg font-semibold text-lg transition-all ${isLoading
+                  ? 'bg-gray-700 text-white cursor-wait'
                   : 'bg-white text-black hover:bg-gray-100 hover:scale-[1.02] active:scale-[0.98]'
                 } disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed`}
               disabled={!selectedFile || !query || !apiKey || isLoading}
             >
               {isLoading ? (
-                <div className="flex items-center justify-center">
-                  <svg
-                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
+                <div className="flex items-center justify-center space-x-2">
+                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-white/30 border-t-white"></div>
                   <span>Analyzing Image...</span>
                 </div>
               ) : (
                 'Analyze Image'
               )}
+            </button>
+
+            {/* Test Error Button - 디버깅용 */}
+            <button
+              type="button"
+              onClick={() => {
+                console.log('Testing error modal');
+                setError('This is a test error message');
+                setShowErrorModal(true);
+              }}
+              className="w-full py-2 px-4 rounded-lg border border-red-600 text-red-400 hover:bg-red-600/10 transition-colors text-sm mt-2"
+            >
+              Test Error Modal (Debug)
             </button>
           </form>
 
