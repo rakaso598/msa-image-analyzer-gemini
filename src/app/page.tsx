@@ -108,7 +108,6 @@ function HomePage() {
       <nav className="border-b border-gray-800 px-6 py-4">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <div className="w-6 h-6 bg-white rounded-sm"></div>
             <span className="font-semibold text-lg">Image Analyzer</span>
           </div>
         </div>
@@ -124,26 +123,9 @@ function HomePage() {
           <p className="text-xl text-gray-400 max-w-2xl mx-auto">
             Upload an image and ask questions about it. Get instant AI-powered analysis with detailed insights.
           </p>
-        </div>
-
-        {/* Form Container */}
+        </div>        {/* Form Container */}
         <div className="max-w-2xl mx-auto">
           <form onSubmit={handleSubmit} className="space-y-8">
-            {/* API Key Input */}
-            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 hover:border-gray-700 transition-colors">
-              <label htmlFor="api-key" className="block text-sm font-medium text-gray-300 mb-3">
-                x-api-key
-              </label>
-              <input
-                type="password"
-                id="api-key"
-                className="w-full p-4 bg-black border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
-                placeholder="Enter your x-api-key value"
-                value={apiKey}
-                onChange={handleApiKeyChange}
-              />
-            </div>
-
             {/* File Upload */}
             <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 hover:border-gray-700 transition-colors">
               <label className="block text-sm font-medium text-gray-300 mb-3">
@@ -202,18 +184,52 @@ function HomePage() {
               />
             </div>
 
+            {/* API Key Input - 버튼 바로 위에 위치 */}
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 hover:border-gray-700 transition-colors">
+              <label htmlFor="api-key" className="block text-sm font-medium text-gray-300 mb-3">
+                x-api-key
+              </label>
+              <input
+                type="password"
+                id="api-key"
+                className="w-full p-4 bg-black border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                placeholder="Enter your x-api-key value"
+                value={apiKey}
+                onChange={handleApiKeyChange}
+              />
+            </div>
+
             {/* Submit Button */}
             <button
               type="submit"
               className={`w-full py-4 px-6 rounded-lg font-semibold text-lg transition-all transform ${isLoading
-                  ? 'bg-gray-700 text-gray-300 cursor-wait'
+                  ? 'bg-gray-700 text-gray-100 cursor-wait'
                   : 'bg-white text-black hover:bg-gray-100 hover:scale-[1.02] active:scale-[0.98]'
                 } disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed`}
               disabled={!selectedFile || !query || !apiKey || isLoading}
             >
               {isLoading ? (
                 <div className="flex items-center justify-center">
-                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-gray-400 border-t-white mr-3"></div>
+                  <svg
+                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
                   <span>Analyzing Image...</span>
                 </div>
               ) : (
