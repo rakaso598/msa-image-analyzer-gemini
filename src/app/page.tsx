@@ -6,6 +6,7 @@ import Image from 'next/image';
 interface AnalysisResult {
   analysis?: string;
   response?: string;
+  result?: string;
   error?: string;
 }
 
@@ -18,6 +19,17 @@ function HomePage() {
   const [error, setError] = useState('');
   const [previewUrl, setPreviewUrl] = useState<string>('');
   const [showErrorModal, setShowErrorModal] = useState(false);
+
+  // 결과 텍스트를 포맷팅하는 함수
+  const formatAnalysisResult = (data: AnalysisResult): string => {
+    const text = data.result || data.analysis || data.response || '';
+
+    // **텍스트** -> 볼드로 변환하고 HTML 반환
+    return text
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      .replace(/\n/g, '<br/>');
+  };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -193,13 +205,16 @@ function HomePage() {
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full bg-white text-black py-4 px-6 rounded-lg font-semibold text-lg hover:bg-gray-100 disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed transition-all transform hover:scale-[1.02] active:scale-[0.98]"
+              className={`w-full py-4 px-6 rounded-lg font-semibold text-lg transition-all transform ${isLoading
+                  ? 'bg-gray-700 text-gray-300 cursor-wait'
+                  : 'bg-white text-black hover:bg-gray-100 hover:scale-[1.02] active:scale-[0.98]'
+                } disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed`}
               disabled={!selectedFile || !query || !apiKey || isLoading}
             >
               {isLoading ? (
                 <div className="flex items-center justify-center">
-                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-gray-400 border-t-transparent mr-3"></div>
-                  Analyzing Image...
+                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-gray-400 border-t-white mr-3"></div>
+                  <span>Analyzing Image...</span>
                 </div>
               ) : (
                 'Analyze Image'
@@ -223,14 +238,41 @@ function HomePage() {
           {/* Result Display */}
           {result && !isLoading && (
             <div className="mt-8 bg-gray-900 border border-gray-800 rounded-xl p-6 hover:border-gray-700 transition-colors">
-              <div className="flex items-center space-x-2 mb-4">
-                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+              <div className="flex items-center space-x-2 mb-6">
+                <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
                 <h2 className="text-xl font-semibold text-white">Analysis Complete</h2>
+                <div className="flex-1"></div>
+                <div className="text-xs text-gray-500 bg-gray-800 px-2 py-1 rounded">
+                  AI Generated
+                </div>
               </div>
-              <div className="bg-black border border-gray-800 rounded-lg p-4">
-                <p className="text-gray-200 leading-relaxed whitespace-pre-wrap">
-                  {result.analysis || result.response || JSON.stringify(result, null, 2)}
-                </p>
+
+              <div className="bg-black border border-gray-800 rounded-lg p-6">
+                <div
+                  className="text-gray-100 leading-relaxed prose prose-invert max-w-none"
+                  dangerouslySetInnerHTML={{
+                    __html: formatAnalysisResult(result)
+                  }}
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex justify-end space-x-3 mt-4">
+                <button
+                  onClick={() => {
+                    const text = result.result || result.analysis || result.response || '';
+                    navigator.clipboard.writeText(text.replace(/\*\*(.*?)\*\*/g, '$1').replace(/\*(.*?)\*/g, '$1'));
+                  }}
+                  className="px-3 py-1 text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 rounded transition-colors"
+                >
+                  Copy Text
+                </button>
+                <button
+                  onClick={() => setResult(null)}
+                  className="px-3 py-1 text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 rounded transition-colors"
+                >
+                  Clear Result
+                </button>
               </div>
             </div>
           )}
