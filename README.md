@@ -1,4 +1,10 @@
-# AI Image Analyzer
+# AI Image Analyzer - ✨[바로가기](https://msa-image-analyzer-gemini.vercel.app)
+
+<img alt="메인화면" src="docs/메인화면.png" />
+
+<img alt="분석중" src="docs/분석중.png" />
+
+<img alt="결과화면" src="docs/결과화면.png" />
 
 AI Image Analyzer는 Next.js 기반의 이미지 분석 웹앱입니다. 이미지를 업로드하고, 질문을 입력하면 AI가 이미지를 분석하여 마크다운 스타일로 결과를 제공합니다. 모바일 퍼스트, Vercel 스타일의 다크 UI를 적용하였으며, x-api-key를 통한 안전한 API 호출을 지원합니다.
 
