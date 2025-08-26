@@ -216,8 +216,8 @@ function HomePage() {
             <button
               type="submit"
               className={`w-full py-4 px-6 rounded-lg font-semibold text-lg transition-all ${isLoading
-                  ? 'bg-gray-700 text-white cursor-wait'
-                  : 'bg-white text-black hover:bg-gray-100 hover:scale-[1.02] active:scale-[0.98]'
+                ? 'bg-gray-700 text-white cursor-wait'
+                : 'bg-white text-black hover:bg-gray-100 hover:scale-[1.02] active:scale-[0.98]'
                 } disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed`}
               disabled={!selectedFile || !query || !apiKey || isLoading}
             >
@@ -231,18 +231,7 @@ function HomePage() {
               )}
             </button>
 
-            {/* Test Error Button - 디버깅용 */}
-            <button
-              type="button"
-              onClick={() => {
-                console.log('Testing error modal');
-                setError('This is a test error message');
-                setShowErrorModal(true);
-              }}
-              className="w-full py-2 px-4 rounded-lg border border-red-600 text-red-400 hover:bg-red-600/10 transition-colors text-sm mt-2"
-            >
-              Test Error Modal (Debug)
-            </button>
+
           </form>
 
           {/* Loading State */}
