@@ -9,9 +9,10 @@ interface AnalysisResult {
   error?: string;
 }
 
-export default function Home() {
+function HomePage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [query, setQuery] = useState('');
+  const [apiKey, setApiKey] = useState('');
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -31,11 +32,15 @@ export default function Home() {
     setQuery(event.target.value);
   };
 
+  const handleApiKeyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setApiKey(event.target.value);
+  };
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (!selectedFile || !query) {
-      setError('Please select an image and enter a question.');
+    if (!selectedFile || !query || !apiKey) {
+      setError('Please select an image, enter a question, and provide your API key.');
       return;
     }
 
@@ -58,6 +63,7 @@ export default function Home() {
           body: JSON.stringify({
             image: base64String,
             query: query,
+            apiKey: apiKey,
           }),
         });
 
@@ -79,19 +85,34 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 px-4 py-6">
+    <div className="min-h-screen bg-gray-900 px-4 py-6">
       <div className="max-w-md mx-auto">
         {/* Header */}
         <header className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">📸 Image Analyzer</h1>
-          <p className="text-gray-600">Upload an image and ask a question.</p>
+          <h1 className="text-3xl font-bold text-white mb-2">📸 Image Analyzer</h1>
+          <p className="text-gray-300">Upload an image and ask a question.</p>
         </header>
 
         {/* Main Form */}
         <main>
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* API Key Input */}
+            <div className="bg-gray-800 rounded-xl p-6 shadow-xl border border-gray-700">
+              <label htmlFor="api-key" className="block text-sm font-medium text-gray-200 mb-2">
+                API Key
+              </label>
+              <input
+                type="password"
+                id="api-key"
+                className="w-full p-4 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                placeholder="Enter your Gemini API key"
+                value={apiKey}
+                onChange={handleApiKeyChange}
+              />
+            </div>
+
             {/* File Input */}
-            <div className="bg-white rounded-xl p-6 shadow-lg">
+            <div className="bg-gray-800 rounded-xl p-6 shadow-xl border border-gray-700">
               <input
                 type="file"
                 id="image-upload"
@@ -101,7 +122,7 @@ export default function Home() {
               />
               <label
                 htmlFor="image-upload"
-                className="block w-full p-4 border-2 border-dashed border-gray-300 rounded-lg text-center cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-colors"
+                className="block w-full p-4 border-2 border-dashed border-gray-600 rounded-lg text-center cursor-pointer hover:border-blue-500 hover:bg-gray-700 transition-colors text-gray-300"
               >
                 {selectedFile ? 'Change Image' : 'Choose an Image'}
               </label>
@@ -121,9 +142,13 @@ export default function Home() {
             </div>
 
             {/* Query Input */}
-            <div className="bg-white rounded-xl p-6 shadow-lg">
+            <div className="bg-gray-800 rounded-xl p-6 shadow-xl border border-gray-700">
+              <label htmlFor="query" className="block text-sm font-medium text-gray-200 mb-2">
+                Question
+              </label>
               <textarea
-                className="w-full p-4 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-400 focus:border-transparent outline-none"
+                id="query"
+                className="w-full p-4 bg-gray-700 border border-gray-600 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-white placeholder-gray-400"
                 placeholder="What can you see in this image?"
                 value={query}
                 onChange={handleQueryChange}
@@ -134,8 +159,8 @@ export default function Home() {
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white py-4 px-6 rounded-xl font-semibold text-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors shadow-lg"
-              disabled={!selectedFile || !query || isLoading}
+              className="w-full bg-blue-600 text-white py-4 px-6 rounded-xl font-semibold text-lg hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed transition-colors shadow-xl"
+              disabled={!selectedFile || !query || !apiKey || isLoading}
             >
               {isLoading ? (
                 <div className="flex items-center justify-center">
@@ -150,16 +175,16 @@ export default function Home() {
 
           {/* Error Display */}
           {error && (
-            <div className="mt-6 bg-red-50 border border-red-200 rounded-xl p-4">
-              <p className="text-red-600 text-center">{error}</p>
+            <div className="mt-6 bg-red-900 border border-red-700 rounded-xl p-4">
+              <p className="text-red-200 text-center">{error}</p>
             </div>
           )}
 
           {/* Result Display */}
           {result && (
-            <div className="mt-6 bg-white rounded-xl p-6 shadow-lg">
-              <h2 className="text-xl font-semibold text-gray-800 mb-3">Analysis Result</h2>
-              <p className="text-gray-700 leading-relaxed">{result.analysis || result.response || JSON.stringify(result)}</p>
+            <div className="mt-6 bg-gray-800 rounded-xl p-6 shadow-xl border border-gray-700">
+              <h2 className="text-xl font-semibold text-white mb-3">Analysis Result</h2>
+              <p className="text-gray-200 leading-relaxed">{result.analysis || result.response || JSON.stringify(result)}</p>
             </div>
           )}
         </main>
@@ -167,3 +192,5 @@ export default function Home() {
     </div>
   );
 }
+
+export default HomePage;

@@ -2,17 +2,15 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
-    // API 키 확인
-    const apiKey = process.env.GEMINI_API_KEY;
+    // 요청 본문 파싱
+    const { image, query, apiKey } = await request.json();
+
     if (!apiKey) {
       return NextResponse.json(
-        { error: 'API key not configured' },
-        { status: 500 }
+        { error: 'API key is required' },
+        { status: 400 }
       );
     }
-
-    // 요청 본문 파싱
-    const { image, query } = await request.json();
 
     if (!image || !query) {
       return NextResponse.json(
