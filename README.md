@@ -1,6 +1,6 @@
 # AI Image Analyzer - ✨[바로가기](https://msa-image-analyzer-gemini.vercel.app)
 
-
+<img alt="메인화면" src="docs/메인화면.png" />
 
 <img alt="분석중" src="docs/분석중.png" />
 
