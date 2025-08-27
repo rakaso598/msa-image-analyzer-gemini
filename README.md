@@ -12,8 +12,10 @@
 ## 💿 환경 변수 (Vercel에 입력)
 
 ```
-# MSA Brain-Gemini API URL
-API_BASE_URL=https://msa-brain-gemini-173411279831.asia-northeast3.run.app/gemini/analyze_image
+# MSA Brain Gemini API Configuration
+API_BASE_URL=https://msa-brain-gemini-173411279831.asia-northeast3.run.app
+API_ANALYZE_ENDPOINT=/gemini/analyze_image
+
 ```
 
 ---
