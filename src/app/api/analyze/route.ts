@@ -30,16 +30,18 @@ export async function POST(request: NextRequest) {
     formData.append('query', query);
 
     // 외부 API 호출
-    const response = await fetch(
-      'https://msa-brain-gemini-173411279831.asia-northeast3.run.app/gemini/analyze_image',
-      {
-        method: 'POST',
-        headers: {
-          'x-api-key': apiKey,
-        },
-        body: formData,
-      }
-    );
+    const apiUrl = process.env.MSA_BRAIN_GEMINI_API_URL;
+    if (!apiUrl) {
+      throw new Error('MSA_BRAIN_GEMINI_API_URL environment variable is not set');
+    }
+
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'x-api-key': apiKey,
+      },
+      body: formData,
+    });
 
     if (!response.ok) {
       throw new Error(`API request failed: ${response.status}`);
