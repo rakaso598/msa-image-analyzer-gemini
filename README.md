@@ -1,13 +1,13 @@
 # AI Image Analyzer - ✨[바로가기](https://msa-image-analyzer-gemini.vercel.app)
 
 ## 🖼️ 메인화면 로고
-<img alt="메인화면" src="docs/로고화면.png" />
+<img width="600" alt="메인화면" src="docs/로고화면.png" />
 
 ## 📖 이미지 분석 중
-<img alt="분석중" src="docs/분석중.png" />
+<img width="600" alt="분석중" src="docs/분석중.png" />
 
 ## 💡 이미지 분석 결과
-<img alt="결과화면" src="docs/결과화면.png" />
+<img width="600" alt="결과화면" src="docs/결과화면.png" />
 
 ## 💿 환경 변수 (Vercel에 입력)
 
