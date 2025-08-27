@@ -30,9 +30,9 @@ export async function POST(request: NextRequest) {
     formData.append('query', query);
 
     // 외부 API 호출
-    const apiUrl = process.env.MSA_BRAIN_GEMINI_API_URL;
+    const apiUrl = process.env.API_BASE_URL;
     if (!apiUrl) {
-      throw new Error('MSA_BRAIN_GEMINI_API_URL environment variable is not set');
+      throw new Error('API_BASE_URL environment variable is not set');
     }
 
     const response = await fetch(apiUrl, {
