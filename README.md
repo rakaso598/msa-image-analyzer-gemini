@@ -1,10 +1,22 @@
 # AI Image Analyzer - ✨[바로가기](https://msa-image-analyzer-gemini.vercel.app)
 
+## 🖼️ 메인화면 로고
 <img alt="메인화면" src="docs/로고화면.png" />
 
+## 📖 이미지 분석 중
 <img alt="분석중" src="docs/분석중.png" />
 
+## 💡 이미지 분석 결과
 <img alt="결과화면" src="docs/결과화면.png" />
+
+## 💿 환경 변수 (Vercel에 입력)
+
+```
+# MSA Brain-Gemini API URL
+API_BASE_URL=https://msa-brain-gemini-173411279831.asia-northeast3.run.app/gemini/analyze_image
+```
+
+---
 
 AI Image Analyzer는 Next.js 기반의 이미지 분석 웹앱입니다. 이미지를 업로드하고, 질문을 입력하면 AI가 이미지를 분석하여 마크다운 스타일로 결과를 제공합니다. 모바일 퍼스트, Vercel 스타일의 다크 UI를 적용하였으며, x-api-key를 통한 안전한 API 호출을 지원합니다.
 
