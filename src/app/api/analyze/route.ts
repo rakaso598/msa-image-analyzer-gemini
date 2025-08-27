@@ -30,10 +30,14 @@ export async function POST(request: NextRequest) {
     formData.append('query', query);
 
     // 외부 API 호출
-    const apiUrl = process.env.API_BASE_URL;
-    if (!apiUrl) {
-      throw new Error('API_BASE_URL environment variable is not set');
+    const apiBaseUrl = process.env.API_BASE_URL;
+    const apiEndpoint = process.env.API_ANALYZE_ENDPOINT;
+
+    if (!apiBaseUrl || !apiEndpoint) {
+      throw new Error('API_BASE_URL and API_ANALYZE_ENDPOINT environment variables must be set');
     }
+
+    const apiUrl = `${apiBaseUrl}${apiEndpoint}`;
 
     const response = await fetch(apiUrl, {
       method: 'POST',
