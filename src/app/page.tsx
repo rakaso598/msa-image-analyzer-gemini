@@ -121,7 +121,7 @@ function HomePage() {
       <nav className="border-b border-gray-800 px-6 py-4">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <span className="font-semibold text-lg">Image Analyzer</span>
+            <span className="font-semibold text-lg">AI Image Analyzer</span>
           </div>
         </div>
       </nav>
